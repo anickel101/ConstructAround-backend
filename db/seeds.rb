@@ -1,3 +1,11 @@
+require 'net/http'
+require 'open-uri'
+require 'json'
+require 'uri'
+require 'openssl'
+require 'faker'
+require 'byebug'
+
 User.all.destroy_all
 Project.all.destroy_all
 Building.all.destroy_all
@@ -6,92 +14,133 @@ Comment.all.destroy_all
 Photo.all.destroy_all
 UserProject.all.destroy_all
 
-anson = User.create()
-reva = User.create()
-archie = User.create()
 
-BUILDING_ONE = Building.create()
-BUILDING_TWO = Building.create()
+def findOrCreateBuilding(record)
+    bldg = Building.find_by(bin: record.bin__.to_i)
+    if bldg == nil
+        bldg = Building.create(bin: record.bin__.to_i, house_num: record.house__.to_i, street_name: record.street_name, borough: record.borough, block: record.block.to_i, lot: record.lot.to_i, gis_lat: record.gis_latitude.to_f, gis_long: record.gis_longitude.to_f)
+    end
+    bldg
+end
 
-TEST_PROJECT_ONE = Project.create(building_id: Building.all.sample.id)
-TEST_PROJECT_TWO = Project.create(building_id: Building.all.sample.id)
-TEST_PROJECT_THREE = Project.create(building_id: Building.all.sample.id)
-TEST_PROJECT_FOUR = Project.create(building_id: Building.all.sample.id)
-TEST_PROJECT_FIVE = Project.create(building_id: Building.all.sample.id)
+def findOrCreateProject(bldg, record)
+    project = Project.find_by(job_num: record.job__.to_i)
+    if project == nil
+        project = Project.create(building_id: bldg.id, job_num: record.job__.to_i, job_type: record.job_type, doc_num: record.doc__.to_i, job_description: record.job_description)
+    end
+    project
+end
 
-search_one = Search.create(user_id: anson.id)
+def findOrCreateOwner(project, record)
+    owner = User.where(first_name: record.owner_s_first_name, last_name: record.owner_s_last_name).first_or_create do |user|
+        user.phone = record.owner_s_phone__
+        user.business = record.owner_s_business_name
+    end
+    relationship = UserProject.where(user_id: owner.id, project_id: project.id).first_or_create do |r| 
+        r.category = "owner"
+    end
+    owner
+end
 
-comment_one = Comment.create(user_id: anson.id, project_id: Project.all.sample.id)
+def findOrCreateApplicant(project, record)
+    applicant = User.where(first_name: record.applicant_s_first_name, last_name: record.applicant_s_last_name).first_or_create do |user|
+        user.phone = "N/A"
+    end
+    relationship = UserProject.where(user_id: applicant.id, project_id: project.id).first_or_create do |r| 
+        r.category = "applicant"
+    end
+end
 
-photo_one = Photo.create(user_id: anson.id, project_id: Project.all.sample.id)
+def findOrCreateContractor(project, record)
+    contractor = User.where(first_name: record.permittee_s_first_name, last_name: record.permittee_s_last_name).first_or_create do |cont|
+        cont.phone = record.permittee_s_phone__
+        cont.business = record.permittee_s_business_name
+    end
+    relationship = UserProject.where(user_id: contractor.id, project_id: project.id).first_or_create do |r| 
+        r.category = "contractor"
+    end
+end
 
-user_project1 = UserProject.create(user_id: anson.id, project_id: Project.all.sample.id)
+def check
+    buildings = Building.all
+    buildings.each_with_index do |b, i|
+        puts "Building #{i}"
+        puts b.bin
+    end
+    projects = Project.all
+    projects.each_with_index do |b, i|
+        puts "Project #{i}"
+        puts b.job_num
+    end
+end
+
+def getJobFilingsFromAPI
+
+    # Application Filings (Whole City)
+    filingsUrl = "https://data.cityofnewyork.us/resource/ic3t-wcy2.json"
+
+    client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
+
+    filings = client.get(filingsUrl, {"$where" => "job_status = 'R'", "$limit" =>2})
+    
+    filings.body.each do |record|
+        bldg = findOrCreateBuilding(record)
+        project = findOrCreateProject(bldg, record)
+        owner = findOrCreateOwner(project, record)
+        applicant = findOrCreateApplicant(project, record)
+    end
+
+end
+
+def getPermitsFromAPI
+
+    # Active Permits Issued (Whole City)
+    permitsUrl = "https://data.cityofnewyork.us/resource/ipu4-2q9a.json"
+
+    client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
+
+    permits = client.get(permitsUrl, {"$where" => "permit_status = 'ISSUED'", "$limit" =>2})
+    
+    permits.body.each do |record|
+        bldg = findOrCreateBuilding(record)
+        project = findOrCreateProject(bldg, record)
+        contractor = findOrCreateContractor(project, record)
+    end
+
+end
+
+getJobFilingsFromAPI()
+getPermitsFromAPI()
 
 
+    # ------------------
 
+    # $$app_token=APP_TOKEN
 
+    # uri = URI("https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$limit=1")
 
+    # http = Net::HTTP.new(uri.host, uri.port)
+    # http.use_ssl = true
 
+    # http.start do |http|
+    #     request = Net::HTTP::Get.new("/")
+    #     response = http.request(request)
+    #     data = response.body
+    #     byebug
+    # end
 
+    # # req["X-App-Token"] = ENV["OPEN_DATA_APP_TOKEN"]
+    # # req["Accept"] = "application/json"
 
+    # byebug
 
+        # WORKS!!
 
+    # url = "https://data.cityofnewyork.us/resource/ipu4-2q9a.json?$where=zip_code=%2711218%27&$limit=1"
 
+    # uri = URI.parse(url)
+    # response = Net::HTTP.get_response(uri)
+    # project = JSON.parse(response.body)
+    # byebug
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# {
-# "borough": "BROOKLYN",
-# "bin__": "3124272",
-# "house__": "261",
-# "street_name": "EAST    4 STREET",
-# "job__": "301302007",
-# "job_doc___": "01",
-# "job_type": "A1",
-# "block": "05327",
-# "lot": "00058",
-# "zip_code": "11218",
-
-# "permit_status": "ISSUED",
-# "filing_status": "RENEWAL",
-# "permit_type": "AL",
-# "permit_sequence__": "16",
-# "site_fill": "NOT APPLICABLE",
-# "filing_date": "10/26/2020",
-# "issuance_date": "10/26/2020",
-# "expiration_date": "03/27/2021",
-# "job_start_date": "10/31/2002",
-
-# "permittee_s_first_name": "MARK",
-# "permittee_s_last_name": "DORNHELM",
-# "permittee_s_business_name": "CONSERVATION PLUMBING & H",
-# "permittee_s_phone__": "7182305444",
-# "permittee_s_license_type": "GC",
-# "permittee_s_license__": "0004819",
-
-# "owner_s_business_name": "SELF",
-# "owner_s_first_name": "ROSALIND",
-# "owner_s_last_name": "DORNHELM",
-# "owner_s_house__": "309",
-# "owner_s_house_street_name": "ALBEMARLE ROAD",
-# "city": "BROOKLYN",
-# "state": "NY",
-# "owner_s_zip_code": "11218",
-# "owner_s_phone__": "7184357448",
-
-# "gis_latitude": "40.646062",
-# "gis_longitude": "-73.976955",
-# "gis_nta_name": "Windsor Terrace"
-# },
+    # ---------------

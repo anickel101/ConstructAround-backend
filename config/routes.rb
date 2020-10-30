@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :permits
   resources :buildings
   resources :projects
   resources :comments
