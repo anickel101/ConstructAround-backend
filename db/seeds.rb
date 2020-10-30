@@ -13,6 +13,7 @@ Search.all.destroy_all
 Comment.all.destroy_all
 Photo.all.destroy_all
 UserProject.all.destroy_all
+Permit.all.destroy_all
 
 
 def findOrCreateBuilding(record)
@@ -61,6 +62,10 @@ def findOrCreateContractor(project, record)
     end
 end
 
+def createPermit(contractor, project, record)
+    permit = Permit.create(project_id: project.id, user_id: contractor.id, permit_status: record.permit_status, work_type: record.work_type, issued_date: record.issuance_date, expiration_date: record.expiration_date, sign_number: record.permit_si_no.to_i)
+end
+
 def check
     buildings = Building.all
     buildings.each_with_index do |b, i|
@@ -81,7 +86,7 @@ def getJobFilingsFromAPI
 
     client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
 
-    filings = client.get(filingsUrl, {"$where" => "job_status = 'R'", "$limit" =>2})
+    filings = client.get(filingsUrl, {"$where" => "job_status = 'R' AND borough = 'BROOKLYN'", "$limit" =>2})
     
     filings.body.each do |record|
         bldg = findOrCreateBuilding(record)
@@ -99,12 +104,13 @@ def getPermitsFromAPI
 
     client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
 
-    permits = client.get(permitsUrl, {"$where" => "permit_status = 'ISSUED'", "$limit" =>2})
+    permits = client.get(permitsUrl, {"$where" => "permit_status = 'ISSUED' AND borough = 'BROOKLYN'", "$limit" =>2})
     
     permits.body.each do |record|
         bldg = findOrCreateBuilding(record)
         project = findOrCreateProject(bldg, record)
         contractor = findOrCreateContractor(project, record)
+        permit = createPermit(contractor, project, record)
     end
 
 end
