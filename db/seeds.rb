@@ -86,7 +86,7 @@ def getJobFilingsFromAPI
 
     client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
 
-    filings = client.get(filingsUrl, {"$where" => "job_status = 'R' AND borough = 'BROOKLYN'", "$limit" =>2})
+    filings = client.get(filingsUrl, {"$where" => "job_status = 'R' AND borough = 'BROOKLYN' AND zip = '11215'", "$limit" =>5})
     
     filings.body.each do |record|
         bldg = findOrCreateBuilding(record)
@@ -104,7 +104,7 @@ def getPermitsFromAPI
 
     client = SODA::Client.new({:domain => "data.cityofnewyork.us"})
 
-    permits = client.get(permitsUrl, {"$where" => "permit_status = 'ISSUED' AND borough = 'BROOKLYN'", "$limit" =>2})
+    permits = client.get(permitsUrl, {"$where" => "permit_status = 'ISSUED' AND borough = 'BROOKLYN' AND zip_code = '11215'", "$limit" =>5})
     
     permits.body.each do |record|
         bldg = findOrCreateBuilding(record)
