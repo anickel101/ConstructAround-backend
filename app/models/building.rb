@@ -28,6 +28,8 @@ class Building < ApplicationRecord
         c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 
         distanceMeters = 6371*1000 * c; 
+        puts distanceMeters
+        distanceMeters
      end
 
 end
