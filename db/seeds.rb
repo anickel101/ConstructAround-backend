@@ -19,7 +19,7 @@ Permit.all.destroy_all
 def findOrCreateBuilding(record)
     bldg = Building.find_by(bin: record.bin__.to_i)
     if bldg == nil
-        bldg = Building.create(bin: record.bin__.to_i, house_num: record.house__.to_i, street_name: record.street_name, borough: record.borough, block: record.block.to_i, lot: record.lot.to_i, gis_lat: record.gis_latitude.to_f, gis_long: record.gis_longitude.to_f)
+        bldg = Building.create(bin: record.bin__.to_i, house_num: record.house__.to_i, street_name: record.street_name, borough: record.borough, block: record.block.to_i, lot: record.lot.to_i, gis_lat: record.gis_latitude.to_f, gis_long: record.gis_longitude.to_f, zip: record["zip"], city: record.city_, state: record.state)
     end
     bldg
 end

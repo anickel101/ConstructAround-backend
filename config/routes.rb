@@ -10,5 +10,6 @@ Rails.application.routes.draw do
 
   get 'buildings/:lat/:long/:range', :to => 'buildings#search'
 
-  # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
+  get 'buildings/size/:size/location/:location/key/:key', :to => 'buildings#buildingImage'
+
 end

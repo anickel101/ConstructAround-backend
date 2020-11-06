@@ -15,5 +15,17 @@ class User < ApplicationRecord
         permits = Permit.all.filter{|permit| permit.user_id == self.id}
     end
 
+    def type (projectId)
+        self.user_projects.find_by(project_id: projectId).category
+    end
+
+    def full_name
+        fullname = "#{self.first_name} #{self.last_name}"
+        fullname.downcase.titlecase
+    end
+
+
 
 end
+
+

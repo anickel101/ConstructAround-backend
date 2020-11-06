@@ -9,6 +9,9 @@ class CreateBuildings < ActiveRecord::Migration[6.0]
       t.string :borough
       t.integer :block
       t.integer :lot
+      t.string :zip
+      t.string :city
+      t.string :state
 
       t.timestamps
     end

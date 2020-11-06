@@ -24,6 +24,9 @@ ActiveRecord::Schema.define(version: 2020_10_29_155841) do
     t.string "borough"
     t.integer "block"
     t.integer "lot"
+    t.string "zip"
+    t.string "city"
+    t.string "state"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -31,6 +34,7 @@ ActiveRecord::Schema.define(version: 2020_10_29_155841) do
   create_table "comments", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "project_id"
+    t.string "content"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_comments_on_project_id"
@@ -54,6 +58,8 @@ ActiveRecord::Schema.define(version: 2020_10_29_155841) do
   create_table "photos", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "project_id"
+    t.string "img_url"
+    t.string "description"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["project_id"], name: "index_photos_on_project_id"
@@ -73,6 +79,7 @@ ActiveRecord::Schema.define(version: 2020_10_29_155841) do
 
   create_table "searches", force: :cascade do |t|
     t.bigint "user_id"
+    t.string "search"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_searches_on_user_id"

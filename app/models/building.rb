@@ -1,6 +1,12 @@
 class Building < ApplicationRecord
     has_many :projects
 
+    def full_address
+    
+        "#{self.house_num} #{self.street_name}, #{self.city}, #{self.state}, #{self["zip"]}"  
+
+    end
+
     def self.getSearchedBuildings(lat, long, range)
         self.all.filter{|b| b.distanceToSearchCenter(lat, long) <= range}
     end
