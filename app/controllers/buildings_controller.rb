@@ -49,24 +49,3 @@ class BuildingsController < ApplicationController
     end
 
 end
-
-        # uri = URI("https://maps.googleapis.com/maps/api/streetview?")
-
-        # http = Net::HTTP.new(uri.host, uri.port)
-        # http.use_ssl = true
-
-        # http.start do |http|
-        #     request = Net::HTTP::Get.new("/")
-        #     response = http.request(request)
-        #     data = response.body
-        #     byebug
-        # end
-
-# let size = "600x400"
-# let key = process.env.REACT_APP_GOOGLE_API_KEY
-# let options = {headers: {
-#     "Content-Type": "application/json",
-#     "Accept": "application/json"
-# }}
-
-# fetch(`https://maps.googleapis.com/maps/api/streetview?location=${address}&size=${size}&key=${key}`

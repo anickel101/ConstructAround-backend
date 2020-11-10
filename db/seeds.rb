@@ -34,7 +34,7 @@ end
 
 def findOrCreateOwner(project, record)
     owner = User.where(first_name: record.owner_s_first_name, last_name: record.owner_s_last_name).first_or_create do |user|
-        user.phone = record.owner_s_phone__
+        user.phone = record.owner_sphone__
         user.business = record.owner_s_business_name
     end
     relationship = UserProject.where(user_id: owner.id, project_id: project.id).first_or_create do |r| 

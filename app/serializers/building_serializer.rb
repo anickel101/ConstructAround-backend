@@ -12,12 +12,12 @@ class BuildingSerializer < ActiveModel::Serializer
 
       comments = []
       p.comments.map do |comm|
-        comments.push({id: comm.id, project_id: comm.projects })
+        comments.push({id: comm.id, project_id: comm.project_id, user_id: comm.user_id, name: comm.full_name, post_date: comm.post_date, content: comm.content })
       end
 
       photos = []
       p.photos.map do |photo|
-        photos.push({id: photo.id, user: photo.user.full_name, project_id: photo.projects})
+        photos.push({id: photo.id, user: photo.user.full_name, user_type: photo.user.type(p.id), project_id: photo.project_id, img_url: photo.img_url, description: photo.description})
       end
 
       {id: p.id, building_id: p.building_id, job_num: p.job_num, job_description: p.job_description, job_type: p.job_type, doc_num: p.doc_num, permits: permits, comments: comments, photos: photos, stakeholders: stakeholders(p)}
