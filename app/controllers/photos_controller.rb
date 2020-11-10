@@ -1,4 +1,6 @@
 class PhotosController < ApplicationController
+    before_action :authorized, only: []
+
 
     def index
         photos = Photo.all 

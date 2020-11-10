@@ -12,4 +12,7 @@ Rails.application.routes.draw do
 
   get 'buildings/size/:size/location/:location/key/:key', :to => 'buildings#buildingImage'
 
+  post "/login", to: "users#login"
+  get "/auto_login", to: "users#auto_login"
+
 end
