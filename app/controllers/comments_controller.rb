@@ -1,5 +1,5 @@
 class CommentsController < ApplicationController
-    before_action :authorized, only: []
+    before_action :authorized, only: [:create]
 
 
     def index

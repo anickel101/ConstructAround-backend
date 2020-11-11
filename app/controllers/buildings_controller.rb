@@ -1,5 +1,5 @@
 class BuildingsController < ApplicationController
-    before_action :authorized, only: [:show]
+    before_action :authorized, only: [:show, :search, :buildingImage]
 
     def index
         buildings = Building.all
