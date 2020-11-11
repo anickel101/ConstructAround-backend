@@ -8,7 +8,7 @@ class ProjectSerializer < ActiveModel::Serializer
 
   def stakeholders
     object.users.map do |u|
-      {id: u.id, first: u.first_name, last: u.last_name, business: u.business, phone: u.phone, type: u.type(object.id), img_url: u.img_url, name: u.full_name}
+      {id: u.id, first: u.first_name, last: u.last_name, business: u.business, phone: u.phone, type: u.type(object.id), img_url: u.img_url, name: u.full_name, up_id: u.up_id(object.id)}
     end
   end
 

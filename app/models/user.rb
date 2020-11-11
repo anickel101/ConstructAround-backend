@@ -21,6 +21,10 @@ class User < ApplicationRecord
         self.user_projects.find_by(project_id: projectId).category
     end
 
+    def up_id(projectId)
+        self.user_projects.find_by(project_id: projectId).id
+    end
+
     def full_name
         fullname = "#{self.first_name} #{self.last_name}"
         fullname.downcase.titlecase

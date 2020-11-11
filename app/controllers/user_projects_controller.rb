@@ -10,10 +10,10 @@ class UserProjectsController < ApplicationController
 
         user_project = UserProject.find_or_create_by(user_project_params)
 
-        stakeholder = User.find(user_project.user_id)
+        project = Project.find(user_project.project_id)
 
         if user_project.save 
-            render json: {stakeholder: stakeholder, user_project: user_project} 
+            render json: project
         else
             render json: {error: user_project.errors.full_messages}, status: :not_acceptable
         end
