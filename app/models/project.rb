@@ -8,4 +8,16 @@ class Project < ApplicationRecord
 
     belongs_to :building
 
+    def getLat
+        self.building.gis_lat
+    end
+
+    def getLong
+        self.building.gis_long
+    end
+
+    def address
+        self.building.partial_address
+    end
+
 end

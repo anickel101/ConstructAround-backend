@@ -7,6 +7,10 @@ class Building < ApplicationRecord
 
     end
 
+    def partial_address
+        "#{self.house_num} #{self.street_name}"
+    end
+
     def self.getSearchedBuildings(lat, long, range)
         self.all.filter{|b| b.distanceToSearchCenter(lat, long) <= range}
     end
