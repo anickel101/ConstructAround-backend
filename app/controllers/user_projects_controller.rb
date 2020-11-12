@@ -11,9 +11,10 @@ class UserProjectsController < ApplicationController
         user_project = UserProject.find_or_create_by(user_project_params)
 
         project = Project.find(user_project.project_id)
+        user = User.find(user_project.user_id)
 
         if user_project.save 
-            render json: project
+            render json: {project: ProjectSerializer.new(project), user: UserSerializer.new(user)}
         else
             render json: {error: user_project.errors.full_messages}, status: :not_acceptable
         end
@@ -22,10 +23,12 @@ class UserProjectsController < ApplicationController
     def destroy
         up = UserProject.find(params[:id])
         project_id = up.project_id
+        user_id = up.user_id
         up.destroy
         project = Project.find(project_id)
+        user = User.find(user_id)
 
-        render json: project
+        render json: {project: ProjectSerializer.new(project), user: UserSerializer.new(user)}
     end
 
     private 
